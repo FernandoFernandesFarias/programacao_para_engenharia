@@ -1,7 +1,11 @@
 lista = []
 
-for i in range(0, 5):
-  lista.append(input('Digite um valor: '))
+while len(lista) < 5:
+  try:
+    lista.append(int(input('Digite um valor: ')))
+  except ValueError:
+    print('Somente números')
+    
 
 print(lista)
 print(lista[::-1])
