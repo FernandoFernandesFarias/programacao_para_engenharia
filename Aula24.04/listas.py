@@ -24,6 +24,4 @@ for i in range(len(lista1)):
 
 print(lista1)
 print(lista2)
-print(lista3)
-
-    
+print(lista3)     
