@@ -1,4 +1,4 @@
-import os
+import os, time
 
 funcionarios = {}
 
@@ -20,6 +20,8 @@ def demitiFuncionario():
 
   opcao = int(input('Digite o código do funcionário que deseja demitir: '))
   funcionarios.pop(opcao)
+  print('Funcionário demitido')
+  time.sleep(2)
   os.system('cls' if os.name == 'nt' else 'clear')
 
 def apresentaFuncionario():
