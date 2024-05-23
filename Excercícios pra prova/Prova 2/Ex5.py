@@ -1,16 +1,19 @@
 numeros = []
+numerosSemImpar = []
 
-qtdNum = int(input('Digite a quantidade de número vai ter na Lista: '))
+qtdNum = int(input('Digite a quantidade de números que vai ter na Lista: '))
 
 for i in range(qtdNum):
-  numeros.append(int(input('Digite um número: ')))
+  numeros.append(int(input(f'Digite o número {i + 1}: ')))
+
+for num in numeros:
+  numerosSemImpar.append(num)
+
+for numImpar in numeros:
+  if numImpar % 2 != 0:
+    numerosSemImpar.remove(numImpar)
 
 print(f'Tamanho da lista: {qtdNum}')
 print(f'Lista: {numeros}')
-
-for num in numeros:
-  if num % 2 == 1:
-    numeros.remove(num)
-
-print(f'Lista sem os ímpares: {numeros}')
+print(f'Lista sem os ímpares: {numerosSemImpar}')
 
