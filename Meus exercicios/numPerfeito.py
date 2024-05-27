@@ -1,7 +1,11 @@
 num = int(input('Digite um número: '))
+div = 0
 
-div = []
+for n in range(1, num):
+  if num % n == 0:
+    div += n
 
-for i in range(num, 1, -1):
-  div.append(i / 2)
-print(div)
+if num == div:
+  print(f'{num} é um número perfeito')
+else:
+  print(f'{num} não é um número perfeito')
