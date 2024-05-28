@@ -12,6 +12,9 @@ while True:
   maior = max(numeros)
   media = soma / i
 
+del(numeros[-1])
+
+print(f'Lista: {numeros}')
 print(f'A soma é {soma}')
 print(f'O menor é {menor}')
 print(f'O maior é {maior}')
