@@ -3,7 +3,7 @@ num2 = int(input('Digite outro número: '))
 
 mult = 0
 
-for i in range(0, num1):
+for i in range(num1):
   mult += num2
 
 print(mult)
