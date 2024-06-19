@@ -2,12 +2,19 @@ import random
 import nltk
 from nltk.corpus import wordnet as wn
 import time
+import os
 
 # Baixando os dados necessários do WordNet
 nltk.download('wordnet')
 nltk.download('omw-1.4')
 
 resultados = []
+
+def limpar_tela():
+    if os.name == 'posix':
+        _ = os.system('clear')
+    else:
+        _ = os.system('cls')
 
 def obter_palavras_e_dicas(nivel_dificuldade):
     palavras_dicas = {}
@@ -34,6 +41,7 @@ def escolher_palavra(palavras_dicas):
     return palavra, dica
 
 def exibir_tabuleiro(palavra, dica, letras_corretas):
+    limpar_tela()
     print("\nDica:", dica)
     print("Palavra:")
     for letra in palavra:
@@ -54,6 +62,7 @@ def jogar_palavras_cruzadas(nivel_dificuldade):
     tentativas = 0
     inicio_jogo = time.time()
 
+    limpar_tela()
     print(f"Bem-vindo ao jogo de Palavras Cruzadas! Nível: {nivel_dificuldade.capitalize()}\n")
 
     while True:
@@ -83,7 +92,11 @@ def jogar_palavras_cruzadas(nivel_dificuldade):
             resultados.append({"Palavra": palavra, "Resultado": "Completou", "Nível": nivel_dificuldade, "Tempo": tempo_total, "Tentativas": tentativas})
             break
 
+    input("\nPressione Enter para continuar...")
+    limpar_tela()
+
 def exibir_resultados():
+    limpar_tela()
     if not resultados:
         print("\nNenhum resultado para exibir.")
     else:
@@ -91,7 +104,11 @@ def exibir_resultados():
         for idx, resultado in enumerate(resultados, start=1):
             print(f"Jogo {idx}: Palavra: {resultado.get('Palavra', '')}, Resultado: {resultado.get('Resultado', '')}, Nível: {resultado.get('Nível', '')}, Tempo: {resultado.get('Tempo', '')} segundos, Tentativas: {resultado.get('Tentativas', '')}")
 
+    input("\nPressione Enter para continuar...")
+    limpar_tela()
+
 while True:
+    limpar_tela()
     print("\nMenu:")
     print("1. Jogar Palavras Cruzadas (Fácil)")
     print("2. Jogar Palavras Cruzadas (Médio)")
