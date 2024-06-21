@@ -40,7 +40,7 @@ def escolher_palavra(palavras_dicas):
     dica = palavras_dicas[palavra]
     return palavra, dica
 
-def exibir_tabuleiro(palavra, dica, letras_corretas):
+def exibir_tabuleiro(palavra, dica, letras_corretas, letras_jogadas):
     limpar_tela()
     print("\nDica:", dica)
     print("Palavra:")
@@ -50,6 +50,7 @@ def exibir_tabuleiro(palavra, dica, letras_corretas):
         else:
             print("_", end=" ")
     print("\n")
+    print("Letras já jogadas: ", " ".join(sorted(letras_jogadas)))
 
 def jogar_palavras_cruzadas(nivel_dificuldade):
     palavras_dicas = obter_palavras_e_dicas(nivel_dificuldade)
@@ -59,6 +60,7 @@ def jogar_palavras_cruzadas(nivel_dificuldade):
 
     palavra, dica = escolher_palavra(palavras_dicas)
     letras_corretas = set()
+    letras_jogadas = set()
     tentativas = 0
     inicio_jogo = time.time()
 
@@ -66,7 +68,7 @@ def jogar_palavras_cruzadas(nivel_dificuldade):
     print(f"Bem-vindo ao jogo de Palavras Cruzadas! Nível: {nivel_dificuldade.capitalize()}\n")
 
     while True:
-        exibir_tabuleiro(palavra, dica, letras_corretas)
+        exibir_tabuleiro(palavra, dica, letras_corretas, letras_jogadas)
         letra = input("Digite uma letra ou 'sair' para encerrar o jogo: ").lower()
 
         if letra == "sair":
@@ -76,7 +78,11 @@ def jogar_palavras_cruzadas(nivel_dificuldade):
         elif letra == "dica":
             print("Dica extra:", dica[:50])  # Mostrar apenas parte da dica
             continue
+        elif letra in letras_jogadas:
+            print("Você já jogou essa letra. Tente novamente.")
+            continue
 
+        letras_jogadas.add(letra)
         tentativas += 1
 
         if letra in palavra.lower():

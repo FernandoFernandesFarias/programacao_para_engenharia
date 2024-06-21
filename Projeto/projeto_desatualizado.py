@@ -1,6 +1,8 @@
 import random
 import nltk
 from nltk.corpus import wordnet as wn
+import time
+import os
 
 # Baixando os dados necessários do WordNet
 nltk.download('wordnet')
@@ -8,7 +10,13 @@ nltk.download('omw-1.4')
 
 resultados = []
 
-def obter_palavras_e_dicas():
+def limpar_tela():
+    if os.name == 'posix':
+        _ = os.system('clear')
+    else:
+        _ = os.system('cls')
+
+def obter_palavras_e_dicas(nivel_dificuldade):
     palavras_dicas = {}
     for synset in wn.all_synsets():
         if synset.lemmas('por'):
@@ -16,7 +24,13 @@ def obter_palavras_e_dicas():
                 palavra = lemma.name().lower().replace('_', ' ')
                 definicao = synset.definition()
                 if palavra not in palavras_dicas and definicao:
-                    palavras_dicas[palavra] = definicao
+                    # Adicionar verificação de tamanho da palavra para o nível de dificuldade
+                    if nivel_dificuldade == 'facil' and len(palavra) <= 5:
+                        palavras_dicas[palavra] = definicao
+                    elif nivel_dificuldade == 'medio' and 5 < len(palavra) <= 8:
+                        palavras_dicas[palavra] = definicao
+                    elif nivel_dificuldade == 'dificil' and len(palavra) > 8:
+                        palavras_dicas[palavra] = definicao
     return palavras_dicas
 
 def escolher_palavra(palavras_dicas):
@@ -26,7 +40,8 @@ def escolher_palavra(palavras_dicas):
     dica = palavras_dicas[palavra]
     return palavra, dica
 
-def exibir_tabuleiro(palavra, dica, letras_corretas):
+def exibir_tabuleiro(palavra, dica, letras_corretas, letras_jogadas):
+    limpar_tela()
     print("\nDica:", dica)
     print("Palavra:")
     for letra in palavra:
@@ -35,54 +50,88 @@ def exibir_tabuleiro(palavra, dica, letras_corretas):
         else:
             print("_", end=" ")
     print("\n")
+    print("Letras já jogadas: ", " ".join(sorted(letras_jogadas)))
 
-def jogar_palavras_cruzadas():
-    palavras_dicas = obter_palavras_e_dicas()
+def jogar_palavras_cruzadas(nivel_dificuldade):
+    palavras_dicas = obter_palavras_e_dicas(nivel_dificuldade)
     if not palavras_dicas:
         print("Nenhuma palavra disponível para jogar.")
         return
 
     palavra, dica = escolher_palavra(palavras_dicas)
     letras_corretas = set()
+    letras_jogadas = set()
+    tentativas = 0
+    inicio_jogo = time.time()
 
-    print("Bem-vindo ao jogo de Palavras Cruzadas!\n")
+    limpar_tela()
+    print(f"Bem-vindo ao jogo de Palavras Cruzadas! Nível: {nivel_dificuldade.capitalize()}\n")
 
     while True:
-        exibir_tabuleiro(palavra, dica, letras_corretas)
+        exibir_tabuleiro(palavra, dica, letras_corretas, letras_jogadas)
         letra = input("Digite uma letra ou 'sair' para encerrar o jogo: ").lower()
 
         if letra == "sair":
             print("Obrigado por jogar! Até a próxima.")
-            resultados.append({"Palavra": palavra, "Resultado": "Não completou"})
+            resultados.append({"Palavra": palavra, "Resultado": "Não completou", "Nível": nivel_dificuldade})
             break
-        elif letra in palavra.lower():
+        elif letra == "dica":
+            print("Dica extra:", dica[:50])  # Mostrar apenas parte da dica
+            continue
+        elif letra in letras_jogadas:
+            print("Você já jogou essa letra. Tente novamente.")
+            continue
+
+        letras_jogadas.add(letra)
+        tentativas += 1
+
+        if letra in palavra.lower():
             letras_corretas.add(letra)
             print("Letra correta!")
         else:
             print("Letra incorreta. Tente novamente.")
 
         if letras_corretas == set(palavra.lower().replace(" ", "")):
-            print("Parabéns! Você acertou a palavra:", palavra)
-            resultados.append({"Palavra": palavra, "Resultado": "Completou"})
+            fim_jogo = time.time()
+            tempo_total = round(fim_jogo - inicio_jogo, 2)
+            print(f"Parabéns! Você acertou a palavra: {palavra}. Tempo total: {tempo_total} segundos. Tentativas: {tentativas}")
+            resultados.append({"Palavra": palavra, "Resultado": "Completou", "Nível": nivel_dificuldade, "Tempo": tempo_total, "Tentativas": tentativas})
             break
 
+    input("\nPressione Enter para continuar...")
+    limpar_tela()
+
 def exibir_resultados():
-    print("\nHistórico de Resultados:")
-    for idx, resultado in enumerate(resultados, start=1):
-        print(f"Jogo {idx}: Palavra: {resultado['Palavra']}, Resultado: {resultado['Resultado']}")
+    limpar_tela()
+    if not resultados:
+        print("\nNenhum resultado para exibir.")
+    else:
+        print("\nHistórico de Resultados:")
+        for idx, resultado in enumerate(resultados, start=1):
+            print(f"Jogo {idx}: Palavra: {resultado.get('Palavra', '')}, Resultado: {resultado.get('Resultado', '')}, Nível: {resultado.get('Nível', '')}, Tempo: {resultado.get('Tempo', '')} segundos, Tentativas: {resultado.get('Tentativas', '')}")
+
+    input("\nPressione Enter para continuar...")
+    limpar_tela()
 
 while True:
+    limpar_tela()
     print("\nMenu:")
-    print("1. Jogar Palavras Cruzadas")
-    print("2. Exibir Resultados")
-    print("3. Sair")
+    print("1. Jogar Palavras Cruzadas (Fácil)")
+    print("2. Jogar Palavras Cruzadas (Médio)")
+    print("3. Jogar Palavras Cruzadas (Difícil)")
+    print("4. Exibir Resultados")
+    print("5. Sair")
     escolha = input("Escolha uma opção: ")
 
     if escolha == "1":
-        jogar_palavras_cruzadas()
+        jogar_palavras_cruzadas('facil')
     elif escolha == "2":
-        exibir_resultados()
+        jogar_palavras_cruzadas('medio')
     elif escolha == "3":
+        jogar_palavras_cruzadas('dificil')
+    elif escolha == "4":
+        exibir_resultados()
+    elif escolha == "5":
         print("Obrigado por usar o programa! Até a próxima.")
         break
     else:
